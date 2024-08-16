@@ -17,7 +17,6 @@ const (
 	Pending TaskStatus = iota
 	InProgress
 	Completed
-	Failed
 )
 
 const MaxTimeout int = 10
@@ -126,14 +125,6 @@ func (c *Coordinator) PerformTaskCb(args *PerformTaskArgs, reply *PerformTaskRep
 	return nil
 }
 
-// an example RPC handler.
-//
-// the RPC argument and reply types are defined in rpc.go.
-func (c *Coordinator) Example(args *ExampleArgs, reply *ExampleReply) error {
-	reply.Y = args.X + 1
-	return nil
-}
-
 // start a thread that listens for RPCs from worker.go
 func (c *Coordinator) server() {
 	rpc.Register(c)
@@ -185,7 +176,7 @@ func (c *Coordinator) CheckForStaleTasks() {
 	}
 }
 
-func (c *Coordinator) StartTicket() {
+func (c *Coordinator) StartTicker() {
 	ticker := time.NewTicker(1 * time.Second)
 
 	go func() {
@@ -222,7 +213,7 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 
 	c.nReduce = nReduce
 
-	c.StartTicket()
+	c.StartTicker()
 
 	c.server()
 	return &c
